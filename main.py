@@ -1,9 +1,15 @@
 import randforest as rf
 import import_data as impd
+import pdb
 
-feature_vectors, classes = impd.build_feature_vectors('positional_results.csv')
+data_loc=str(raw_input('Data location: '))
+num_trees=int(raw_input('Num trees: '))
 
-clf = rf.create_random_forest(vectors=feature_vectors, classes=classes)
+feature_vectors, classes = impd.build_feature_vectors(data_loc)
+
+training, testing = rf.split_data(feature_vectors,classes)
+
+clf = rf.create_random_forest(num_trees=num_trees,vectors=training["vectors"], classes=training["classes"])
 print(clf)
 cont=True
 while cont:
@@ -11,8 +17,15 @@ while cont:
     if(new_action=="exit"):
         cont=False
     elif(new_action=="predict"):
-        new_location=str(raw_input("CSV location:"))
+        #new_location=str(raw_input("CSV location:"))
         #class_predictions=rf.predict_csv(new_location)
-        print(clf.predict(impd.build_feature_vector_no_class(new_location)))
-    elif(new_action=="show"):
-        print(clf)
+        #print(clf.predict(impd.build_feature_vector_no_class(new_location)))
+        correct_results,total_vectors=rf.predict_data(testing,clf)
+        #clf.predict(testing)
+        print("Num trees: " + str(num_trees))
+        print("results: total vectors - " + str(total_vectors) + " , correct matches - " + str(correct_results) + "(" + str((float(correct_results)/float(total_vectors)) * 100) + ")")
+    elif(new_action=="rebuild"):
+        num_trees=int(raw_input('Num trees: '))
+        clf = rf.create_random_forest(num_trees=num_trees,vectors=feature_vectors, classes=classes)
+
+    
