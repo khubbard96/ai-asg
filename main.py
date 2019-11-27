@@ -17,11 +17,7 @@ while cont:
     if(new_action=="exit"):
         cont=False
     elif(new_action=="predict"):
-        #new_location=str(raw_input("CSV location:"))
-        #class_predictions=rf.predict_csv(new_location)
-        #print(clf.predict(impd.build_feature_vector_no_class(new_location)))
         correct_results,total_vectors=rf.predict_data(testing,clf)
-        #clf.predict(testing)
         print("Num trees: " + str(num_trees))
         print("results: total vectors - " + str(total_vectors) + " , correct matches - " + str(correct_results) + "(" + str((float(correct_results)/float(total_vectors)) * 100) + ")")
     elif(new_action=="rebuild"):
