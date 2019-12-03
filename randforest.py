@@ -4,8 +4,8 @@ import import_data as impd
 import pdb
 
 #logic
-def create_random_forest(vectors,classes,num_trees=20):
-    rfc=RandomForestClassifier(n_estimators=num_trees)
+def create_random_forest(num_trees,criterion,bootstrap,vectors,classes,max_depth):
+    rfc=RandomForestClassifier(n_estimators=num_trees,bootstrap=bootstrap,criterion=criterion,max_depth=max_depth)
     rfc.fit(vectors,classes)
     return rfc
 
@@ -16,11 +16,24 @@ def predict_data(testing_data,clf):
     total_vectors=len(fvs)
     idx=0
     correct_results=0
+    results_by_class={
+        "exp": {},
+        "total": {}
+    }
+    for item in set(class_results):
+        results_by_class["total"][item]=0
+    for item in set(predictions):
+        results_by_class["exp"][item]=0
+
     for _ in predictions:
+        results_by_class["total"][class_results[idx]] += 1
         if(class_results[idx]==predictions[idx]):
             correct_results += 1
+            results_by_class["exp"][predictions[idx]] += 1
+
+        #print("Actual: " + class_results[idx] + ", result: " + predictions[idx])
         idx += 1
-    return correct_results,total_vectors
+    return correct_results,total_vectors,results_by_class
 
 def split_data(feature_vectors,classes):
     percent_split = 1

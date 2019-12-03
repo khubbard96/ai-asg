@@ -1,5 +1,6 @@
 import pandas as pd
 import pdb
+import random
 
 def import_data():
     return 0,0
@@ -7,9 +8,10 @@ def import_data():
 def build_feature_vectors(location):
     df=import_csv(location)
     vector_length=len(df.values.tolist()[0]) - 1
+    df.sample(frac=1)
     X = df.iloc[:,0:vector_length].values.tolist()
     y = df.iloc[:,vector_length].values.tolist()
-    return X,y
+    return X,y,df.columns
 
 def build_feature_vector_no_class(location):
     df=import_csv(location)
