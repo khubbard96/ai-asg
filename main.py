@@ -41,14 +41,35 @@ while cont:
     new_action=str(raw_input(">>>"))
     if(new_action=="exit"):
         cont=False
+
+    elif(new_action=="prune"):
+        training, testing = rf.split_data(feature_vectors,classes)
+        clf.fit(training["vectors"],training["classes"])
+        starting_levels=clf.estimators_[0].tree_.max_depth
+        for i in range(starting_levels,0,-1):
+            clf = rf.create_random_forest(
+                num_trees=default_parameters["n_estimators"],
+                criterion=default_parameters["criterion"],
+                bootstrap=default_parameters["bootstrap"],
+                vectors=training["vectors"], 
+                classes=training["classes"],
+                max_depth=i
+            )
+            clf.fit(training["vectors"],training["classes"])
+            correct_results,total_vectors,results_by_class=rf.predict_data(testing,clf)
+            #print report
+            print("============")
+            print("Max levels: " + str(i))
+            print(default_parameters)
+            print("Condition: " + str(do_condition))
+            print(clf)
+            print("results: total vectors - " + str(total_vectors) + " , correct matches - " + str(correct_results) + "(" + str((float(correct_results)/float(total_vectors)) * 100) + ")")
+            print(results_by_class)
+            print("============")
     elif(new_action=="predict"):
         training, testing = rf.split_data(feature_vectors,classes)
         clf.fit(training["vectors"],training["classes"])
-        export_graphviz(clf.estimators_[0],
-            feature_names=column_names[0:-1],
-            filled=True,
-            rounded=True)
-        os.system('dot -Tpng tree.dot -o tree.png')
+        print(str(clf.estimators_[0].tree_.max_depth))
         correct_results,total_vectors,results_by_class=rf.predict_data(testing,clf)
         #print report
         print("============")
